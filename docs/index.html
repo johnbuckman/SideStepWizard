@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SideStep Wizard — hand anyone a one-click installer for your iOS app</title>
+  <meta name="description" content="SideStep Wizard makes a one-click installer for your iOS app — no Xcode and no developer account on the other end. Point it at your GitHub repo and send anyone a single file, or add a one-click button to your website." />
+  <style>
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    body { max-width: 860px; margin: 0 auto; padding: 28px 24px 80px;
+           font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+           color: #1f2328; background: #fff; }
+    h1 { font-size: 2em; border-bottom: 1px solid #d0d7de; padding-bottom: .3em; }
+    h2 { font-size: 1.5em; border-bottom: 1px solid #d0d7de; padding-bottom: .3em; margin-top: 2em; }
+    h3 { font-size: 1.2em; margin-top: 1.5em; }
+    a { color: #0969da; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    img { max-width: 100%; height: auto; }
+    em { color: #57606a; }
+    code { background: #eff1f3; padding: .2em .4em; border-radius: 6px; font-size: .9em;
+           font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    pre { background: #f6f8fa; padding: 16px; border-radius: 8px; overflow: auto; }
+    pre code { background: none; padding: 0; }
+    ul, ol { padding-left: 1.6em; }
+    li { margin: .3em 0; }
+    hr { border: 0; border-top: 1px solid #d0d7de; margin: 2em 0; }
+    blockquote { margin: 1em 0; padding: .4em 1em; color: #57606a;
+                 border-left: .25em solid #d0d7de; background: #f6f8fa; border-radius: 4px; }
+    .center { text-align: center; }
+    .shot { border: 1px solid #d0d7de; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+    .dl { display: inline-block; padding: 12px 22px; border-radius: 10px; background: #0a84ff;
+          color: #fff; font-weight: 600; text-decoration: none; }
+    .dl:hover { text-decoration: none; background: #0060df; }
+    .muted { color: #57606a; }
+    .step { display: grid; grid-template-columns: 1fr; gap: 14px; margin: 1.5em 0; }
+    .demo { background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 12px; padding: 24px; margin: 20px 0; text-align: center; }
+  </style>
+</head>
+<body>
+
+<h1>SideStep Wizard</h1>
+
+<p><strong>SideStep Wizard</strong> lets you hand <em>anyone</em> a one-click installer for your
+iOS app — <strong>no Xcode, and no developer account on their end</strong>. Point it at your app's
+GitHub repo once, and it builds a small installer you can send to people or link from your website.
+Opening it installs <a href="https://johnbuckman.github.io/SideStep/">SideStep</a>, gets their
+iPhone or iPad ready, and installs your app.</p>
+
+<p class="center" style="margin: 1.6em 0;">
+  <a class="dl" href="https://github.com/johnbuckman/SideStepWizard/releases/latest/download/SideStepWizard.dmg">Download SideStep Wizard</a><br>
+  <span class="muted" style="font-size:.9em;">notarized <code>.dmg</code> — macOS 14 (Sonoma) or newer, Apple Silicon</span>
+</p>
+
+<p>It never bundles a copy of SideStep — the installer <strong>downloads the latest SideStep</strong>
+at run time, so nobody is ever stuck on a stale version.</p>
+
+<h2>How it works</h2>
+
+<h3>1. Point it at your GitHub repo</h3>
+<p>Enter the repo whose Releases hold your app's <code>.ipa</code>, and an app name. The wizard looks
+up the repo's immutable GitHub id — no URL shortener, nothing to register — so the installer keeps
+finding your app even if you later rename the repo.</p>
+<div class="step">
+  <img class="shot" src="screenshots/wizard-1-create.png" alt="The SideStep Wizard's first screen: a field for the GitHub repository and a field for the app name, with a Create Installer button.">
+</div>
+
+<h3>2. It builds the installer — and a .zip to host</h3>
+<p>Click <strong>Create Installer</strong> and two files land on your Desktop: the installer app
+(<code>&lt;app&gt; installer (…).app</code>) and a <code>&lt;app&gt; installer.zip</code>. Send the
+app to anyone, or double-click it yourself to test. The <code>.zip</code> is the same installer,
+ready to host on the web — tell the wizard where you'll put it, and that becomes the download visitors
+get if they don't already have SideStep.</p>
+<div class="step">
+  <img class="shot" src="screenshots/wizard-2-created.png" alt="The wizard's second screen: 'Installer created', showing the installer and its .zip are on the Desktop, and a field asking where you'll host the installer.">
+</div>
+
+<h3>3. Copy a one-click button for your website</h3>
+<p>The wizard hands you ready-to-paste HTML. The download link and the button's styling are
+clearly-marked variables at the top (<code>INSTALLER_URL</code>, <code>BUTTON_CLASS</code>,
+<code>BUTTON_STYLE</code>) — set <code>BUTTON_CLASS</code> to your site's own button class and it
+matches your design. If a visitor already has SideStep, the button opens straight to your app; if not,
+it downloads the installer that walks them through setup first.</p>
+<div class="step">
+  <img class="shot" src="screenshots/wizard-3-button.png" alt="The wizard's third screen: the generated one-click-button HTML with a SETTINGS block at the top, a Copy HTML button, and a 'Copied to clipboard' confirmation.">
+</div>
+
+<h2>The one-click button</h2>
+<p>Here's a live example — this button installs <strong>Magnatune</strong> (a music player) with
+SideStep. If you already have SideStep it opens straight to Magnatune; if not, it offers the Magnatune
+installer, which installs SideStep first and walks you through setup.</p>
+
+<div class="demo">
+  <span class="sidestep-install" data-repo="johnbuckman/magnatune-app"
+        data-app="Magnatune"
+        data-installer="https://github.com/johnbuckman/magnatune-app/releases/latest/download/magnatune-app-installer.zip"></span>
+</div>
+
+<script>
+(function () {
+  function mount(el){
+    var repo=el.getAttribute("data-repo"); if(!repo) return;
+    var dl=el.getAttribute("data-installer")||"";
+    var app=el.getAttribute("data-app")||repo.split("/").pop();
+    var btn=document.createElement("a");
+    btn.textContent="Install "+app+" with SideStep";
+    btn.href="sidestep://install?repo="+encodeURIComponent(repo);
+    btn.style.cssText="display:inline-block;padding:12px 22px;border-radius:10px;background:#0a84ff;color:#fff;font-weight:600;text-decoration:none;cursor:pointer;";
+    var note=document.createElement("div"); note.style.cssText="margin-top:10px;font-size:14px;opacity:.75;"; note.style.display="none";
+    var downloaded=false;
+    function download(){ if(!dl) return; var a=document.createElement("a"); a.href=dl; a.setAttribute("download",""); document.body.appendChild(a); a.click(); document.body.removeChild(a); }
+    btn.addEventListener("click",function(){
+      if(downloaded) return;
+      btn.textContent="Installing…";
+      // Detect launch via document.hidden only — not window "blur", which also fires when the
+      // browser shows a "scheme has no registered handler" alert, wrongly suppressing the fallback.
+      var launched=false;
+      document.addEventListener("visibilitychange",function vc(){if(document.hidden){launched=true;document.removeEventListener("visibilitychange",vc);}});
+      setTimeout(function(){
+        if(launched) return;
+        if(!dl){ note.textContent="Install SideStep first, then click again."; note.style.display="block"; btn.textContent="Install "+app+" with SideStep"; return; }
+        download();
+        downloaded=true; btn.href=dl; btn.setAttribute("download","");
+        btn.textContent="Run the "+app+" installer now";
+        note.textContent="It’s going to your Downloads folder now.";
+        note.style.display="block";
+      },1500);
+    });
+    el.appendChild(btn); el.appendChild(note);
+  }
+  function init(){document.querySelectorAll(".sidestep-install").forEach(mount);}
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init); else init();
+})();
+</script>
+
+<h2>What your recipients get</h2>
+<p>Opening the installer walks them through everything, verifying each step for real over USB:</p>
+<ol>
+  <li><strong>Gets SideStep.</strong> Downloads the latest notarized SideStep and installs it (or updates an older copy in place).</li>
+  <li><strong>Connects</strong> their iPhone or iPad over USB and waits for <strong>Trust This Computer</strong>.</li>
+  <li><strong>Turns on Developer Mode</strong> (iOS 16+), surviving the reboot.</li>
+  <li><strong>Installs your app</strong> — hands off to SideStep, which shows a confirm window; they tap Install, then trust the developer once under Settings ▸ General ▸ VPN &amp; Device Management.</li>
+</ol>
+<p>From then on, SideStep keeps the app signed and updated in the background over Wi-Fi — so a
+sideloaded app behaves like a normal, permanently-installed one.</p>
+
+<hr>
+<p class="muted">SideStep Wizard is part of <a href="https://johnbuckman.github.io/SideStep/">SideStep</a> —
+a small macOS menu-bar app that installs iOS apps onto your own device using your own Apple ID. It is
+signed with an Apple Developer ID and notarized by Apple.</p>
+
+</body>
+</html>
