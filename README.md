@@ -3,7 +3,7 @@
 **SideStep Wizard** lets you hand *anyone* a one-click installer for your iOS app — **no Xcode, and no developer account on their end**. Point it at your app's GitHub repo once, and it builds a small installer you can send to people or link from your website. Opening it installs [SideStep](https://johnbuckman.github.io/SideStep/), gets their iPhone or iPad ready, and installs your app.
 
 **[⬇ Download SideStep Wizard](https://github.com/johnbuckman/SideStepWizard/releases/latest/download/SideStepWizard.dmg)**
-— notarized `.dmg`, macOS 14 (Sonoma) or newer, Apple Silicon.
+— notarized `.dmg`, macOS 14 (Sonoma) or newer, Apple silicon or Intel.
 
 It never bundles a copy of SideStep — the installer **downloads the latest SideStep** at run time, so nobody is ever stuck on a stale version.
 
