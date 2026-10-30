@@ -1,100 +1,249 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SideStep Wizard — hand anyone a one-click installer for your iOS app</title>
-  <meta name="description" content="SideStep Wizard makes a one-click installer for your iOS app — no Xcode and no developer account on the other end. Point it at your GitHub repo and send anyone a single file, or add a one-click button to your website." />
-  <style>
-    :root { color-scheme: light; }
-    * { box-sizing: border-box; }
-    body { max-width: 860px; margin: 0 auto; padding: 28px 24px 80px;
-           font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-           color: #1f2328; background: #fff; }
-    h1 { font-size: 2em; border-bottom: 1px solid #d0d7de; padding-bottom: .3em; }
-    h2 { font-size: 1.5em; border-bottom: 1px solid #d0d7de; padding-bottom: .3em; margin-top: 2em; }
-    h3 { font-size: 1.2em; margin-top: 1.5em; }
-    a { color: #0969da; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    img { max-width: 100%; height: auto; }
-    em { color: #57606a; }
-    code { background: #eff1f3; padding: .2em .4em; border-radius: 6px; font-size: .9em;
-           font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-    pre { background: #f6f8fa; padding: 16px; border-radius: 8px; overflow: auto; }
-    pre code { background: none; padding: 0; }
-    ul, ol { padding-left: 1.6em; }
-    li { margin: .3em 0; }
-    hr { border: 0; border-top: 1px solid #d0d7de; margin: 2em 0; }
-    blockquote { margin: 1em 0; padding: .4em 1em; color: #57606a;
-                 border-left: .25em solid #d0d7de; background: #f6f8fa; border-radius: 4px; }
-    .center { text-align: center; }
-    .shot { border: 1px solid #d0d7de; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
-    .dl { display: inline-block; padding: 12px 22px; border-radius: 10px; background: #0a84ff;
-          color: #fff; font-weight: 600; text-decoration: none; }
-    .dl:hover { text-decoration: none; background: #0060df; }
-    .muted { color: #57606a; }
-    .step { display: grid; grid-template-columns: 1fr; gap: 14px; margin: 1.5em 0; }
-    .demo { background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 12px; padding: 24px; margin: 20px 0; text-align: center; }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SideStep Wizard</title>
+<meta name="description" content="SideStep Wizard makes a one-click installer for your iOS app, with no Xcode and no developer account on the other end. Point it at your GitHub repo and send anyone a single file, or add a one-click button to your website.">
+<link rel="icon" href="screenshots/appicon.png">
+<meta property="og:title" content="SideStep Wizard: a one-click installer for your iOS app">
+<meta property="og:description" content="Point it at your app's GitHub repo once, and send anyone a single file that installs SideStep, sets up their iPhone, and installs your app.">
+<meta property="og:image" content="https://johnbuckman.github.io/SideStepWizard/screenshots/wizard-1-create.png">
+<style>
+/* Same stylesheet as johnbuckman.github.io/SideStep (hand-written, no pandoc). */
+:root{
+  --bg:#fdf9f3; --panel:#fff; --ink:#1c1c1c; --ink-soft:#55524c; --muted:#8a8579;
+  --line:#ece6db; --line-strong:#ddd5c7; --accent:#e8902a; --accent-ink:#b8650c; --link:#1d64c2; --btn:#16a34a;
+  --hero1:#3d5aa8; --hero2:#24346e; --hero3:#141c3c;
+  --shadow:0 1px 2px rgba(40,30,10,.06), 0 8px 24px rgba(40,30,10,.07);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#16130f; --panel:#211d18; --ink:#ece7dd; --ink-soft:#b8b1a4; --muted:#938c7f;
+    --line:#332e26; --line-strong:#443d32; --link:#7ab0f2; --accent-ink:#f0a24a;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.45);
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+img{max-width:100%;height:auto;display:block}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+
+/* top bar */
+.top{position:absolute;inset:0 0 auto;z-index:3}
+.top .wrap{display:flex;align-items:center;gap:22px;padding-top:16px;padding-bottom:16px}
+.brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:700;font-size:18px}
+.brand img{width:30px;height:30px}
+.top nav{margin-left:auto;display:flex;gap:22px;font-size:15px}
+.top nav a{color:rgba(255,255,255,.85)}
+
+/* hero */
+.hero{background:radial-gradient(120% 100% at 25% 15%,var(--hero1) 0%,var(--hero2) 55%,var(--hero3) 100%);color:#fff;padding:110px 0 80px;position:relative;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:center}
+.hero-icon{width:96px;height:96px;filter:drop-shadow(0 12px 24px rgba(0,0,0,.35))}
+.hero h1{font-size:64px;line-height:1.05;letter-spacing:-.02em;margin:18px 0 14px}
+.hero .lead{font-size:24px;line-height:1.35;margin:0 0 14px;color:#fff}
+.hero .sub{font-size:17px;color:rgba(255,255,255,.8);margin:0 0 26px;max-width:30em}
+.btns{display:flex;flex-wrap:wrap;gap:12px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:12px;font-weight:650;font-size:16px;background:var(--btn);color:#fff}
+.btn:hover{text-decoration:none;filter:brightness(1.08)}
+.btn.ghost{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3)}
+.fine{margin-top:16px;font-size:14px;color:rgba(255,255,255,.65)}
+.hero-shots{position:relative;height:500px}
+.hero-shots .mac{position:absolute;right:0;top:0;width:330px;border-radius:12px;box-shadow:0 24px 60px rgba(0,0,0,.45);overflow:hidden;background:#fff}
+.hero-shots .phone{position:absolute;left:10px;top:70px;width:200px;border-radius:32px;background:#111;padding:8px;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.hero-shots .phone img{border-radius:25px}
+
+.hero-right{display:flex;flex-direction:column;align-items:flex-end;gap:18px}
+.hero-right .hero-shots{width:100%}
+.watch{display:inline-flex;align-items:center;gap:10px;padding:8px 16px 8px 8px;border-radius:999px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.22);color:#fff;font-size:15px;font-weight:600}
+.watch:hover{text-decoration:none;background:rgba(0,0,0,.5)}
+.watch .play{width:30px;height:30px;border-radius:50%;background:#e62117;display:flex;align-items:center;justify-content:center;padding-left:2px}
+.watch .len{font-weight:500;color:rgba(255,255,255,.65);white-space:nowrap}
+
+/* sections */
+section{padding:70px 0}
+section.alt{background:var(--panel);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+h2{font-size:36px;letter-spacing:-.015em;line-height:1.15;margin:0 0 12px}
+.kicker{font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);margin:0 0 8px}
+.intro{color:var(--ink-soft);font-size:19px;max-width:44em;margin:0 0 34px}
+p{color:var(--ink-soft)}
+b,strong{color:var(--ink)}
+
+
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow)}
+.alt .card{background:var(--bg)}
+.card .ic{font-size:30px;line-height:1}
+.card h3{font-size:18px;margin:12px 0 6px}
+.card p{margin:0;font-size:15.5px}
+
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.step{display:flex;flex-direction:column}
+.step .n{width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
+.step h3{font-size:20px;margin:12px 0 4px}
+.step p{margin:0 0 16px;font-size:16px}
+.shot{border-radius:12px;border:1px solid var(--line);box-shadow:var(--shadow);background:#fff;overflow:hidden;margin-top:auto}
+.shot.crop{max-height:330px}
+.shot.crop img{width:100%}
+
+.split{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
+.split.rev{grid-template-columns:.9fr 1.1fr}
+.split.rev .txt{order:2}
+ul.ticks{list-style:none;padding:0;margin:18px 0 0}
+ul.ticks li{position:relative;padding-left:32px;margin:12px 0;color:var(--ink-soft)}
+ul.ticks li::before{content:"✓";position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;background:rgba(22,163,74,.14);color:var(--btn);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center}
+.phones{display:flex;gap:18px;justify-content:center}
+.phones .phone{width:230px;border-radius:36px;background:#111;padding:9px;box-shadow:var(--shadow)}
+.phones .phone img{border-radius:28px}
+
+.try{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:26px;text-align:center;box-shadow:var(--shadow);margin-top:26px}
+.alt .try{background:var(--bg)}
+.try p{margin:12px 0 0;font-size:15px}
+
+.pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.pills span{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-size:15px;color:var(--ink-soft)}
+
+footer{padding:44px 0 60px;color:var(--muted);font-size:14.5px}
+footer .cols{display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px}
+footer h4{color:var(--ink);font-size:14px;text-transform:uppercase;letter-spacing:.06em;margin:0 0 10px}
+footer p{color:var(--muted);margin:0 0 8px}
+footer a{color:var(--ink-soft)}
+footer ul{list-style:none;padding:0;margin:0}
+footer li{margin:6px 0}
+code{font:14px ui-monospace,Menlo,monospace;background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+
+@media(max-width:900px){
+  .hero .wrap,.split,.split.rev{grid-template-columns:1fr}
+  .split.rev .txt{order:0}
+  .hero-shots{display:none}
+  .hero-right{align-items:flex-start}
+  .hero h1{font-size:48px}
+  .cards{grid-template-columns:1fr 1fr}
+  .steps{grid-template-columns:1fr}
+  footer .cols{grid-template-columns:1fr}
+  .top nav a:not(.keep){display:none}
+}
+@media(max-width:560px){ .watch .len{display:none} .cards{grid-template-columns:1fr} .phones .phone{width:46%} }
+
+.hero-shots .wiz{position:absolute;right:0;top:10px;width:420px;border-radius:12px;box-shadow:0 24px 60px rgba(0,0,0,.45);overflow:hidden;background:#fff}
+.steps .shot img{width:100%}
+ol.flow{counter-reset:f;list-style:none;padding:0;margin:18px 0 0}
+ol.flow li{counter-increment:f;position:relative;padding-left:44px;margin:16px 0;color:var(--ink-soft)}
+ol.flow li::before{content:counter(f);position:absolute;left:0;top:0;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:15px}
+</style>
 </head>
 <body>
 
-<h1>SideStep Wizard</h1>
+<header class="top"><div class="wrap">
+  <a class="brand" href="./"><img src="screenshots/appicon.png" alt="">SideStep Wizard</a>
+  <nav>
+    <a href="#how">How it works</a>
+    <a href="#button">The button</a>
+    <a href="https://johnbuckman.github.io/SideStep/" class="keep">SideStep</a>
+    <a href="https://github.com/johnbuckman/SideStepWizard">GitHub</a>
+  </nav>
+</div></header>
 
-<p><strong>SideStep Wizard</strong> lets you hand <em>anyone</em> a one-click installer for your
-iOS app — <strong>no Xcode, and no developer account on their end</strong>. Point it at your app's
-GitHub repo once, and it builds a small installer you can send to people or link from your website.
-Opening it installs <a href="https://johnbuckman.github.io/SideStep/">SideStep</a>, gets their
-iPhone or iPad ready, and installs your app.</p>
+<div class="hero"><div class="wrap">
+  <div>
+    <img class="hero-icon" src="screenshots/appicon.png" alt="The SideStep icon">
+    <h1>SideStep Wizard</h1>
+    <p class="lead">Hand anyone a one-click installer for your iOS app.</p>
+    <p class="sub">Point it at your app's GitHub repo once, and it builds a small installer you can send to people or link from your website. Opening it installs SideStep, gets their iPhone or iPad ready, and installs your app. No Xcode, and no developer account on their end.</p>
+    <div class="btns">
+      <a class="btn" href="https://github.com/johnbuckman/SideStepWizard/releases/latest/download/SideStepWizard.dmg"> Download SideStep Wizard</a>
+      <a class="btn ghost" href="https://johnbuckman.github.io/SideStep/">About SideStep</a>
+    </div>
+    <div class="fine">Notarized .dmg · macOS 14 or newer · Apple silicon · free and open source</div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-shots" aria-hidden="true">
+      <div class="wiz"><img src="screenshots/wizard-1-create.png" alt=""></div>
+    </div>
+    <a class="watch" href="https://youtu.be/MM5PfgjOk8E"><span class="play"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z" fill="#fff"/></svg></span>Watch the SideStep explainer video <span class="len">3 min</span></a>
+  </div>
+</div></div>
 
-<p class="center" style="margin: 1.6em 0;">
-  <a class="dl" href="https://github.com/johnbuckman/SideStepWizard/releases/latest/download/SideStepWizard.dmg">Download SideStep Wizard</a><br>
-  <span class="muted" style="font-size:.9em;">notarized <code>.dmg</code> — macOS 14 (Sonoma) or newer, Apple Silicon</span>
-</p>
+<section class="alt"><div class="wrap">
+  <p class="kicker">Why use it</p>
+  <h2>Ship your app without the App Store</h2>
+  <p class="intro">Your users don't need to know what sideloading is. They open one file, follow the steps it shows, and your app is on their iPhone, kept signed and up to date from then on.</p>
+  <div class="cards">
+    <div class="card"><div class="ic">📄</div><h3>One file to send</h3><p>A single installer app, or a .zip to host on your site. Email it, link it, or put it on your app's Releases page.</p></div>
+    <div class="card"><div class="ic">🔄</div><h3>Never out of date</h3><p>The installer bundles no copy of SideStep: it downloads the latest at run time, so nobody gets a stale version.</p></div>
+    <div class="card"><div class="ic">🔗</div><h3>Survives a rename</h3><p>It finds your app by the repo's permanent GitHub id, with no URL shortener and nothing to register.</p></div>
+    <div class="card"><div class="ic">✅</div><h3>Opens without warnings</h3><p>The installer is the same signed, notarized app, just renamed, so Gatekeeper lets it straight through.</p></div>
+  </div>
+</div></section>
 
-<p>It never bundles a copy of SideStep — the installer <strong>downloads the latest SideStep</strong>
-at run time, so nobody is ever stuck on a stale version.</p>
+<section id="how"><div class="wrap">
+  <p class="kicker">How it works</p>
+  <h2>Three steps, about a minute</h2>
+  <p class="intro">You need a public GitHub repo whose Releases hold your app's .ipa.</p>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><h3>Point it at your repo</h3><p>Enter the repo and an app name. The wizard looks up the repo's permanent GitHub id, so the installer keeps finding your app even if you rename the repo later.</p>
+      <div class="shot"><img src="screenshots/wizard-1-create.png" alt="Step 1: enter your GitHub repository and app name"></div></div>
+    <div class="step"><div class="n">2</div><h3>It builds the installer</h3><p>Click <b>Create Installer</b> and two files land on your Desktop: the installer app, to send or test, and a .zip of it to host. Tell the wizard where you'll host the .zip.</p>
+      <div class="shot"><img src="screenshots/wizard-2-created.png" alt="Step 2: the installer and its .zip are on your Desktop"></div></div>
+    <div class="step"><div class="n">3</div><h3>Copy the website button</h3><p>Paste the ready-made HTML into your site. Its settings are marked at the top (<code>INSTALLER_URL</code>, <code>BUTTON_CLASS</code>, <code>BUTTON_STYLE</code>): use your own button class and it matches your design.</p>
+      <div class="shot"><img src="screenshots/wizard-3-button.png" alt="Step 3: copy the one-click button HTML"></div></div>
+  </div>
+</div></section>
 
-<h2>How it works</h2>
+<section class="alt" id="button"><div class="wrap">
+  <p class="kicker">The one-click button</p>
+  <h2>Try it</h2>
+  <p class="intro">This button installs Magnatune (a music player) with SideStep. If you already have SideStep, it opens straight to Magnatune. If not, it downloads the Magnatune installer, which installs SideStep first and walks you through setup.</p>
+  <div class="try">
+    <span class="sidestep-install" data-repo="johnbuckman/magnatune-app" data-app="Magnatune" data-installer="https://github.com/johnbuckman/magnatune-app/releases/latest/download/magnatune-app-installer.zip"></span>
+    <p>On a phone or a PC the button explains that SideStep needs a Mac, instead of doing nothing.</p>
+  </div>
+</div></section>
 
-<h3>1. Point it at your GitHub repo</h3>
-<p>Enter the repo whose Releases hold your app's <code>.ipa</code>, and an app name. The wizard looks
-up the repo's immutable GitHub id — no URL shortener, nothing to register — so the installer keeps
-finding your app even if you later rename the repo.</p>
-<div class="step">
-  <img class="shot" src="screenshots/wizard-1-create.png" alt="The SideStep Wizard's first screen: a field for the GitHub repository and a field for the app name, with a Create Installer button.">
-</div>
+<section><div class="wrap split">
+  <div class="txt">
+    <p class="kicker">What your users get</p>
+    <h2>Every step checked for real</h2>
+    <p>Opening the installer walks them through everything, confirming each step over USB:</p>
+    <ol class="flow">
+      <li><b>Gets SideStep</b>: downloads the latest notarized SideStep and installs it, or updates an older copy in place.</li>
+      <li><b>Connects their iPhone or iPad</b> over USB and waits for them to tap Trust.</li>
+      <li><b>Turns on Developer Mode</b> (iOS 16 and later), carrying on after the restart.</li>
+      <li><b>Installs your app</b>: SideStep shows a confirmation, they click Install, then trust the developer once in Settings ▸ General ▸ VPN &amp; Device Management.</li>
+    </ol>
+    <p>From then on SideStep keeps the app signed and up to date in the background, over Wi-Fi, so it behaves like a normal, permanently installed app.</p>
+  </div>
+  <div class="phones"><div class="phone"><img src="https://johnbuckman.github.io/SideStep/screenshots/phone-updater-2026.jpg" alt="An app installed by SideStep, showing its Updater panel"></div></div>
+</div></section>
 
-<h3>2. It builds the installer — and a .zip to host</h3>
-<p>Click <strong>Create Installer</strong> and two files land on your Desktop: the installer app
-(<code>&lt;app&gt; installer (…).app</code>) and a <code>&lt;app&gt; installer.zip</code>. Send the
-app to anyone, or double-click it yourself to test. The <code>.zip</code> is the same installer,
-ready to host on the web — tell the wizard where you'll put it, and that becomes the download visitors
-get if they don't already have SideStep.</p>
-<div class="step">
-  <img class="shot" src="screenshots/wizard-2-created.png" alt="The wizard's second screen: 'Installer created', showing the installer and its .zip are on the Desktop, and a field asking where you'll host the installer.">
-</div>
-
-<h3>3. Copy a one-click button for your website</h3>
-<p>The wizard hands you ready-to-paste HTML. The download link and the button's styling are
-clearly-marked variables at the top (<code>INSTALLER_URL</code>, <code>BUTTON_CLASS</code>,
-<code>BUTTON_STYLE</code>) — set <code>BUTTON_CLASS</code> to your site's own button class and it
-matches your design. If a visitor already has SideStep, the button opens straight to your app; if not,
-it downloads the installer that walks them through setup first.</p>
-<div class="step">
-  <img class="shot" src="screenshots/wizard-3-button.png" alt="The wizard's third screen: the generated one-click-button HTML with a SETTINGS block at the top, a Copy HTML button, and a 'Copied to clipboard' confirmation.">
-</div>
-
-<h2>The one-click button</h2>
-<p>Here's a live example — this button installs <strong>Magnatune</strong> (a music player) with
-SideStep. If you already have SideStep it opens straight to Magnatune; if not, it offers the Magnatune
-installer, which installs SideStep first and walks you through setup.</p>
-
-<div class="demo">
-  <span class="sidestep-install" data-repo="johnbuckman/magnatune-app"
-        data-app="Magnatune"
-        data-installer="https://github.com/johnbuckman/magnatune-app/releases/latest/download/magnatune-app-installer.zip"></span>
-</div>
+<footer><div class="wrap cols">
+  <div>
+    <h4>SideStep Wizard</h4>
+    <p>Part of <a href="https://johnbuckman.github.io/SideStep/">SideStep</a>, a small Mac menu-bar app that installs iOS apps onto your own devices using your own Apple ID. Signed with an Apple Developer ID and notarized by Apple.</p>
+  </div>
+  <div>
+    <h4>Use it</h4>
+    <ul>
+      <li><a href="https://github.com/johnbuckman/SideStepWizard/releases/latest/download/SideStepWizard.dmg">Download the Wizard</a></li>
+      <li><a href="https://johnbuckman.github.io/SideStep/help.html#installers">The SideStep guide</a></li>
+      <li><a href="https://youtu.be/MM5PfgjOk8E">The SideStep video</a></li>
+    </ul>
+  </div>
+  <div>
+    <h4>More</h4>
+    <ul>
+      <li><a href="https://johnbuckman.github.io/SideStep/">SideStep</a></li>
+      <li><a href="https://github.com/johnbuckman/SideStepWizard/releases">All releases</a></li>
+      <li><a href="https://github.com/johnbuckman/SideStep">Source on GitHub</a></li>
+    </ul>
+  </div>
+</div></footer>
 
 <script>
 (function () {
@@ -164,23 +313,5 @@ installer, which installs SideStep first and walks you through setup.</p>
   if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init); else init();
 })();
 </script>
-
-<h2>What your recipients get</h2>
-<p>Opening the installer walks them through everything, verifying each step for real over USB:</p>
-<ol>
-  <li><strong>Gets SideStep.</strong> Downloads the latest notarized SideStep and installs it (or updates an older copy in place).</li>
-  <li><strong>Connects</strong> their iPhone or iPad over USB and waits for <strong>Trust This Computer</strong>.</li>
-  <li><strong>Turns on Developer Mode</strong> (iOS 16+), surviving the reboot.</li>
-  <li><strong>Installs your app</strong> — hands off to SideStep, which shows a confirm window; they tap Install, then trust the developer once under Settings ▸ General ▸ VPN &amp; Device Management.</li>
-</ol>
-<p>From then on, SideStep keeps the app signed and updated in the background over Wi-Fi — so a
-sideloaded app behaves like a normal, permanently-installed one.</p>
-
-<hr>
-<p class="muted">SideStep Wizard is part of <a href="https://johnbuckman.github.io/SideStep/">SideStep</a> —
-a small macOS menu-bar app that installs iOS apps onto your own device using your own Apple ID. It is
-signed with an Apple Developer ID and notarized by Apple.</p>
-<p><strong><a href="https://johnbuckman.github.io/SideStep/">← Visit the SideStep site</a></strong></p>
-
 </body>
 </html>
